@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_logs: {
+        Row: {
+          action_type: string
+          admin_email: string
+          created_at: string
+          description: string | null
+          id: string
+        }
+        Insert: {
+          action_type: string
+          admin_email: string
+          created_at?: string
+          description?: string | null
+          id?: string
+        }
+        Update: {
+          action_type?: string
+          admin_email?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      analytics: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device: string | null
+          id: string
+          ip_address: string | null
+          last_active_at: string
+          location: string | null
+          page_url: string | null
+          session_id: string
+          stay_time_seconds: number
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          location?: string | null
+          page_url?: string | null
+          session_id: string
+          stay_time_seconds?: number
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          ip_address?: string | null
+          last_active_at?: string
+          location?: string | null
+          page_url?: string | null
+          session_id?: string
+          stay_time_seconds?: number
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           company_name: string | null
