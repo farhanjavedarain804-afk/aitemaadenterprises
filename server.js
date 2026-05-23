@@ -1,21 +1,31 @@
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { Hono } from "hono";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import worker from "./dist/server/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const documentRoot = path.join(__dirname, "dist", "client");
 
-const app = express();
+const app = new Hono();
 
-// Serve static files from the public folder (you will copy the built client here)
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static client assets built by Vite (Document Root)
+app.use("/*", serveStatic({ root: documentRoot }));
 
-// Route all requests to index.html for client‑side routing
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+// Forward all other requests to the TanStack Start SSR worker
+app.all("*", async (c) => {
+  return await worker.fetch(c.req.raw, process.env, {
+    waitUntil: () => {},
+    passThroughOnException: () => {}
+  });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server listening on http://localhost:${PORT}`);
+const port = process.env.PORT || 3000;
+console.log(`🚀 Server listening on http://localhost:${port}`);
+
+serve({
+  fetch: app.fetch,
+  port
 });
